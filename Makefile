@@ -5,19 +5,28 @@ minor = 0
 release = 0
 version = $(major).$(minor).$(release)
 
+SOURCE = gnuplot.f90
+
+OBJECTS = $(patsubst %.f90, %.o, $(SOURCE))
+
 LIB = $(HOME)/Fortran/lib
 INC = $(HOME)/Fortran/include
 
-.PHONY : install compile all test
+.PHONY : install all test
 
-all : install compile 
+all : install $(LIB)/lib$(libname).so 
 
-compile : 
-	$(FC) -O3 -fpic -c -J $(INC) $(libname).f90
-	$(FC) -shared -o $(LIB)/lib$(libname).so.$(version) $(libname).o
-	rm *.o
-	ln -s $(LIB)/lib$(libname).so.$(version) $(LIB)/lib$(libname).so.$(major)
-	ln -s $(LIB)/lib$(libname).so.$(major) $(LIB)/lib$(libname).so
+$(LIB)/lib$(libname).so.$(version): $(OBJECTS)
+	$(FC) -shared -o $@ $^	
+
+%.o: %.f90
+	$(FC) -O3 -fpic -c -J $(INC) $< -o $@
+
+$(LIB)/lib$(libname).so.$(major) : $(LIB)/lib$(libname).so.$(version)
+	ln -s $< $@
+
+$(LIB)/lib$(libname).so : $(LIB)/lib$(libname).so.$(major)
+	ln -s $< $@
 
 install:
 	./install.sh
@@ -29,3 +38,6 @@ test:
 
 readme:
 	pandoc -f gfm README.md -o README.pdf
+
+cleanlib:
+	rm -r $(LIB)/lib$(libname).* $(INC)/lib$(libname).*
