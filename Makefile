@@ -12,7 +12,7 @@ OBJECTS = $(patsubst %.f90, %.o, $(SOURCE))
 LIB = $(HOME)/Fortran/lib
 INC = $(HOME)/Fortran/include
 
-.PHONY : install all test
+.PHONY : install all test readme cleanlib
 
 all : install $(LIB)/lib$(libname).so 
 

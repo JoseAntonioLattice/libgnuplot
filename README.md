@@ -1,6 +1,6 @@
 # gnuplot library
 
-This library has routines to solve for plotting inside Fortran using Gnuplot
+This library has routines for plotting inside Fortran using Gnuplot
 
 
 ## Installation
@@ -8,15 +8,19 @@ This library has routines to solve for plotting inside Fortran using Gnuplot
 - First clone the repository:
 
 ```
-	git clone
+	git clone https://github.com/JoseAntonioLattice/libgnuplot-fortran.git
 ```
 
 - Move to the directory where you clone the repository and run
 ```
 	make all
 ```
-this will compile and install the library `libgnuplot.so` on `$HOME/Fortran/lib`
+this will compile and install the library `libgnuplot.so` on `$HOME/Fortran/lib`.
 
+For running the test, type 
+```
+    make test
+```
 
 ## Use
 
@@ -27,7 +31,7 @@ this will compile and install the library `libgnuplot.so` on `$HOME/Fortran/lib`
     use gnuplot
     implicit none
 
-    !!!!!!!!!!!
+    !!!!!!!!!!! 
     ! your code
     !!!!!!!!!!!
 
