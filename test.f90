@@ -4,12 +4,14 @@ program test
   use gnuplot
   implicit none
 
+  type(gpplot) :: plot1
   integer(i4), parameter :: n = 100
   real(dp), dimension(n) :: x, y
   integer(i4) :: i
 
   x = [((i-1)*0.1_dp, i =1, n)] 
   y = sin(x)
-  call plot(x,y,x_label = 'perro', y_label = 'puto', key ="berga", title = 'beibi')
-  !call plot(x,y)
+  plot1 = gpplot(y_label = "perro", title = "hola")
+  !call plot(x,y,x_label = 'perro', y_label = 'puto', key ="berga", title = 'beibi')
+  call plot1%plot(x,y)
 end program test

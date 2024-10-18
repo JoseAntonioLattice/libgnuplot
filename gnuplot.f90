@@ -3,20 +3,34 @@ module gnuplot
   use iso_fortran_env, only : dp => real64, i4 => int32
   implicit none
 
+  type gpplot
+     character(:), allocatable :: x_label 
+     character(:), allocatable :: y_label != ' '
+     character(:), allocatable :: key     != ' '
+     character(:), allocatable :: title   != ' '
+   contains
+     procedure :: plot 
+  end type gpplot 
 contains
 
-  subroutine plot(x,y,x_label,y_label,key,title)
+  subroutine plot(self,x,y)
+    class(gpplot) :: self
     real(dp), dimension(:), intent(in) :: x, y
-    character(*), intent(in), optional :: x_label, y_label, title, key
-    character(:), allocatable :: x_str, y_str, title_str, key_str
     integer(i4) :: outunit, i
     character(256) :: arguments
 
-    call check_prescence(x_label,x_str)
-    call check_prescence(y_label,y_str)
-    call check_prescence(title,title_str)
-    call check_prescence(key,key_str)
-    arguments = x_str//" "//y_str//" "//key_str//" "//title_str
+    if (.not. allocated(self%x_label)) self%x_label = ''
+    if (.not. allocated(self%y_label)) self%y_label = ''
+    if (.not. allocated(self%key))     self%key = ''
+    if (.not. allocated(self%title))   self%title = ''
+
+    self%x_label = "'"//self%x_label//"'"
+    self%y_label = "'"//self%y_label//"'"
+    self%key     = "'"//self%key//"'"
+    self%title   = "'"//self%title//"'"
+    
+    arguments = self%x_label//" "//self%y_label//" "//self%key//" "//self%title
+    print*, trim(arguments)
     
     open(newunit = outunit, file = '/tmp/temp.dat')
     do i = 1, size(x)
@@ -37,5 +51,6 @@ contains
        str = ''
     end if
   end subroutine check_prescence
+ 
   
 end module gnuplot
