@@ -4,10 +4,12 @@ major = 0
 minor = 0
 release = 0
 version = $(major).$(minor).$(release)
-
+SRCDIR = src
+OBJDIR = obj
+BUILD = build
 SOURCE = gnuplot.f90
 
-OBJECTS = $(patsubst %.f90, %.o, $(SOURCE))
+OBJECTS = $(patsubst %.f90, $(OBJDIR)/%.o, $(SOURCE))
 
 LIB = $(HOME)/Fortran/lib
 INC = $(HOME)/Fortran/include
@@ -19,7 +21,7 @@ all : install $(LIB)/lib$(libname).so
 $(LIB)/lib$(libname).so.$(version): $(OBJECTS)
 	$(FC) -shared -o $@ $^	
 
-%.o: %.f90
+$(OBJDIR)/%.o: $(SRCDIR)/%.f90 $(OBJDIR) 
 	$(FC) -O3 -fpic -c -J $(INC) $< -o $@
 
 $(LIB)/lib$(libname).so.$(major) : $(LIB)/lib$(libname).so.$(version)
@@ -28,13 +30,18 @@ $(LIB)/lib$(libname).so.$(major) : $(LIB)/lib$(libname).so.$(version)
 $(LIB)/lib$(libname).so : $(LIB)/lib$(libname).so.$(major)
 	ln -s $< $@
 
+$(OBJDIR):
+	mkdir -p $@
+
 install:
 	./install.sh
 
-test:
-	@$(FC) -I$(INC) test.f90 -L$(LIB) -l$(libname)
-	@LD_LIBRARY_PATH=$(LIB) ./a.out
+test: $(BUILD) 
+	@$(FC) -I$(INC) test.f90 -o $(BUILD)/$@ -L$(LIB) -l$(libname)
+	@LD_LIBRARY_PATH=$(LIB) $(BUILD)/$@
 
+$(BUILD):
+	mkdir -p $@
 
 readme:
 	pandoc -f gfm README.md -o README.pdf
